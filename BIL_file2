@@ -4,278 +4,278 @@ from buildhat import Motor
 
 
 class BIL:
-input_GPIO = GPIO # From GPIO library reference w/n scope of class
-input_PWMLED = PWMLED # PWMLED from gpiozero library. Placing it here for my
-motor_function = Motor
-activated_LED = [] # Empty list stores state of chosen pins to persist on cycle
-activated_motor = []
-selected_leds = [] # Empty list stores info down to dictionary lv for chosen pins
-selected_motors = []
-# This list of dictionaries is the default var for when the init func is called
-pins = [{'room': 'fireplace_1', 'pin_num': 3, 'PWM': 30},
-{'room': 'fireplace_2', 'pin_num': 6, 'PWM': 30},
-{'room': 'entry_way', 'pin_num': 17, 'PWM': 100},
-{'room': 'dining_room', 'pin_num': 27, 'PWM': 100},
-{'room': 'camera', 'pin_num': 26, 'PWM': 100},
-{'room': 'big_brothers_room', 'pin_num': 7, 'PWM': 100},
-{'room': 'hallway', 'pin_num': 5, 'PWM': 100},
-{'room': 'bathroom', 'pin_num': 13, 'PWM': 100},
-{'room': 'attic', 'pin_num': 21, 'PWM': 100},
-{'room': 'kitchen', 'pin_num': 20, 'PWM': 100},
-{'room': 'basement', 'pin_num': 12, 'PWM': 100},
-{'room': 'back_porch', 'pin_num': 22, 'PWM': 100}]
+    input_GPIO = GPIO            # From GPIO library reference w/n scope of class
+    input_PWMLED = PWMLED        # PWMLED from gpiozero library. Placing it here for my
+    motor_function = Motor
+    activated_LED = []           # Empty list stores state of chosen pins to persist on cycle
+    activated_motor = []
+    selected_leds = []           # Empty list stores info down to dictionary lv for chosen pins
+    selected_motors = []
+    # This list of dictionaries is the default var for when the init func is called
+    pins = [{'room': 'fireplace_1', 'pin_num': 3, 'PWM': 30},
+            {'room': 'fireplace_2', 'pin_num': 6, 'PWM': 30},
+            {'room': 'entry_way', 'pin_num': 17, 'PWM': 100},
+            {'room': 'dining_room', 'pin_num': 27, 'PWM': 100},
+            {'room': 'camera', 'pin_num': 26, 'PWM': 100},
+            {'room': 'big_brothers_room', 'pin_num': 7, 'PWM': 100},
+            {'room': 'hallway', 'pin_num': 5, 'PWM': 100},
+            {'room': 'bathroom', 'pin_num': 13, 'PWM': 100},
+            {'room': 'attic', 'pin_num': 21, 'PWM': 100},
+            {'room': 'kitchen', 'pin_num': 20, 'PWM': 100},
+            {'room': 'basement', 'pin_num': 12, 'PWM': 100},
+            {'room': 'back_porch', 'pin_num': 22, 'PWM': 100}]
 
-ports = [{'motor': 'door', 'port': 'A', 'speed': 80},
-{'motor': 'party_trick', 'port': 'B', 'speed': 80}]
+    ports = [{'motor': 'door', 'port': 'A', 'speed': 80},
+             {'motor': 'party_trick', 'port': 'B', 'speed': 80}]
 
-"""initiates the class BIL (__init__ is a constructor)"""
-def __init__(self, pins=None):
-self.initial_setup() # calling the pin setup func below (initial_setup)
-# # set mode on pins as Broadcom (BCM) aka GPIO numbering sys
-# self.input_GPIO.setmode(GPIO.BCM)
-# # paired w/ setup mode to disable warnings
-# self.input_GPIO.setwarnings(False)
-# pins set to None for versatility on prog to call modified version where class is concluded
-if pins is not None: # staging for default pins list incase nothing else is entered. Allowing option of using other lists inserted quickly.
-# Assigning pins to list of device parameters
-self.pins = pins
+    """initiates the class BIL (__init__ is a constructor)"""
+    def __init__(self, pins=None):
+        self.initial_setup()    # calling the pin setup func below (initial_setup)
+        # # set mode on pins as Broadcom (BCM) aka GPIO numbering sys
+        # self.input_GPIO.setmode(GPIO.BCM)
+        # # paired w/ setup mode to disable warnings
+        # self.input_GPIO.setwarnings(False)
+        # pins set to None for versatility on prog to call modified version where class is concluded
+        if pins is not None:    # staging for default pins list incase nothing else is entered. Allowing option of using other lists inserted quickly.
+#           Assigning pins to list of device parameters
+            self.pins = pins
 
-"""Setting list of dictionaries "pins" to empty to allow for user to pick the pins from the top of class or main"""
-def set_pins(self, pins=None):
-if pins is not None:
-self.pins = pins
+    """Setting list of dictionaries "pins" to empty to allow for user to pick the pins from the top of class or main"""
+    def set_pins(self, pins=None):
+        if pins is not None:
+            self.pins = pins
 
-"""Set up mode tells GPIO library which pin-numbering sys used"""
-def initial_setup(self):
-# set mode on pins as Broadcom (BCM) aka GPIO numbering sys
-self.input_GPIO.setmode(GPIO.BCM)
-# paired w/ setup mode to disable warnings
-self.input_GPIO.setwarnings(False)
+    """Set up mode tells GPIO library which pin-numbering sys used"""
+    def initial_setup(self):
+        # set mode on pins as Broadcom (BCM) aka GPIO numbering sys
+        self.input_GPIO.setmode(GPIO.BCM)
+        # paired w/ setup mode to disable warnings
+        self.input_GPIO.setwarnings(False)
 
-"""Main menu to prompt user for device they want to activate"""
-def main_menu(self, pins: list): # "pins: list" is added to assign it as a list????????
-# Step 1: Ask user if they want a function on; led or motor. Or to exit.
-main_menu = input("Turn a led or motor on? Type 'led' or 'motor'. If not, type 'exit': ")
-return main_menu # return result of input
+    """Main menu to prompt user for device they want to activate"""
+    def main_menu(self, pins: list):    # "pins: list" is added to assign it as a list????????
+#   Step 1: Ask user if they want a function on; led or motor. Or to exit.
+        main_menu = input("Turn a led or motor on? Type 'led' or 'motor'. If not, type 'exit': ")
+        return main_menu                # return result of input
 
-"""User chooses room lights to turn on """
-def led_choice(self): # function will store user choices in prepared empty lists
-if self.main_menu(self.pins) == 'led': # if the func "main_menu" which uses pins is 'led'#
-# Step 2: Ask user which room light they want on.
-print("Which house light would you like on? ")
+    """User chooses room lights to turn on """
+    def led_choice(self):                           # function will store user choices in prepared empty lists
+        if self.main_menu(self.pins) == 'led':      # if the func "main_menu" which uses pins is 'led'#
+#   Step 2: Ask user which room light they want on.
+            print("Which house light would you like on? ")
 
-print("Here's a list of options. ")
+            print("Here's a list of options. ")
 
-# Step 3: Show available options as assigned #'s
-counter = 1 # start count at 1
-for pin in self.pins: # for each index (pin) in list of dictionaries (self.pins))
-print(f"{counter}: {pin['room']} pin # is {pin['pin_num']} ")
-counter = counter + 1 # Adds 1 to each cycle, at end of loop left at 13.
+#   Step 3: Show available options as assigned #'s
+            counter = 1                         # start count at 1
+            for pin in self.pins:               # for each index (pin) in list of dictionaries (self.pins))
+                print(f"{counter}: {pin['room']} pin # is {pin['pin_num']} ")
+                counter = counter + 1   # Adds 1 to each cycle, at end of loop left at 13.
 
-# Step 4: Store user input
-# get user input w/ "counter -1" b/c count loop ended at (13). Make list of multi #'s w/ "split"
-l = input(f"Enter # 1 - {counter - 1} (Split choices with comma): ").split(',')
-# converting elements from list into integers (their currently 'strings')
-led_user = [int(item) for item in l] # convert elements (item) in list(l) to integers
-# Puts list in sequential order. Failsafe to prevent stopping short of running all inputs. If a higher # comes before lower #.
-led_user.sort() # numerical order ensures program runs til last # (it it stops when larger # comes before smaller #)
+#   Step 4: Store user input
+            # get user input w/ "counter -1" b/c count loop ended at (13). Make list of multi #'s w/ "split"
+            l = input(f"Enter # 1 - {counter - 1} (Split choices with comma):  ").split(',')
+            # converting elements from list into integers (their currently 'strings')
+            led_user = [int(item) for item in l]    # convert elements (item) in list(l) to integers
+            # Puts list in sequential order. Failsafe to prevent stopping short of running all inputs. If a higher # comes before lower #.
+            led_user.sort()                         # numerical order ensures program runs til last # (it it stops when larger # comes before smaller #)
 
-# Step 5: Matching choices to GPIO pins
-for inputs in range(len(self.pins)): # for each dictionary (inputs) in length of list (pins) generate a # (Range func makes seq of #'s.)
-for led in led_user: # & for each index(led) in user choice(led_user)
-if (inputs + 1) == led: # match GPIO pin, w/ user choice requires +1 to inputs since index starts at 0
+#   Step 5: Matching choices to GPIO pins
+            for inputs in range(len(self.pins)):    # for each dictionary (inputs) in length of list (pins) generate a # (Range func makes seq of #'s.)
+                for led in led_user:                # & for each index(led) in user choice(led_user)
+                    if (inputs + 1) == led:         # match GPIO pin, w/ user choice requires +1 to inputs since index starts at 0
 
-# Show chosen GPIO pin number(s) on list pins with matching indexed user_led number:
-# print(f"Chosen {led}: for pin {pins[inputs]} for {inputs}")
-print(f"Chosen {led}: for pin {self.pins[inputs]['pin_num']} for {self.pins[inputs]['room']}")
-# Store input pins dictionary lv info in empty list, located at top of class "selected_leds"
-self.selected_leds.append(self.pins[inputs]) #
+#                       Show chosen GPIO pin number(s) on list pins with matching indexed user_led number:
+#                       print(f"Chosen {led}: for pin {pins[inputs]} for {inputs}")
+                        print(f"Chosen {led}: for pin {self.pins[inputs]['pin_num']} for {self.pins[inputs]['room']}")
+#                       Store input pins dictionary lv info in empty list, located at top of class "selected_leds"
+                        self.selected_leds.append(self.pins[inputs])    #
 
-# Step 6: Turn on led
-# append user led_choices actual pin # to empty list (top of class)
-self.activated_LED.append(self.input_PWMLED(self.pins[inputs]['pin_num']))
+#   Step 6: Turn on led
+#                       append user led_choices actual pin # to empty list (top of class)
+                        self.activated_LED.append(self.input_PWMLED(self.pins[inputs]['pin_num']))
 
-"""Turns on the stored list of activated pins"""
-def led_on(self):
-for selected in self.activated_LED: # for each index in stored LED choice list(activated_LED):
-# selected.start(10) # start is a func from Rpi_GPIO library to power pin.
-selected.on() # duty cycle on 10% bright
+    """Turns on the stored list of activated pins"""
+    def led_on(self):
+        for selected in self.activated_LED:   # for each index in stored LED choice list(activated_LED):
+            # selected.start(10)              # start is a func from Rpi_GPIO library to power pin.
+            selected.on()                     # duty cycle on 10% bright
 
-"""Turns off the stored list of activated pins"""
-def led_off(self):
-for selected in self.activated_LED:
-# selected.stop()
-selected.off()
+    """Turns off the stored list of activated pins"""
+    def led_off(self):
+        for selected in self.activated_LED:
+            # selected.stop()
+            selected.off()
 
-"""Make activated leds blink"""
-def led_blink(self):
-# Step 1: Prompt user for any effects they want to apply to LEDs
-effects_blink = input("Do you want to blink any LEDs? Type 'y' for yes or 'n' for no: ")
-# Step 2: Show available options as assigned #'s
-if effects_blink == 'y':
-print("Here are the room lights that are on: ")
-# Showing preselected leds from the stored list
-for led in range(len(self.selected_leds)):
-# +1 indices (led) to override Python count that starts at 0
-print(f"{led + 1}: {self.selected_leds[led]['room']}")
+    """Make activated leds blink"""
+    def led_blink(self):
+#       Step 1: Prompt user for any effects they want to apply to LEDs
+        effects_blink = input("Do you want to blink any LEDs? Type 'y' for yes or 'n' for no:  ")
+#       Step 2: Show available options as assigned #'s
+        if effects_blink == 'y':
+            print("Here are the room lights that are on: ")
+#           Showing preselected leds from the stored list
+            for led in range(len(self.selected_leds)):
+                # +1 indices (led) to override Python count that starts at 0
+                print(f"{led + 1}: {self.selected_leds[led]['room']}")
 
-# Step 3: Setup pins to blink
-# Get user input & make list of multi #'s w/ "split".
-b = input(f"Which of these lights would you like to blink? (Split choices with comma): ").split(',')
-# convert list of elements from strings to integers
-pins_to_blink = [int(item) for item in b]
-# Puts list in sequential order. Failsafe to prevent stop at largest # out of order
-pins_to_blink.sort()
-# Index through leds already to blink
-for inputs in pins_to_blink:
-print(f"Blinking selection #{inputs - 1}: for room {self.selected_leds[inputs - 1]['room']}")
-# - 1 from indices (inputs) b/c count starts at 0. Allowing reference to pins list from "activated_LED.
-self.activated_LED[inputs - 1].blink(fade_in_time=.25 , fade_out_time=.25 ) #blink func from PWDLED library on user input (pins_to_blink)
-else:
-print("No lights selected to blink")
+#       Step 3: Setup pins to blink
+#           Get user input & make list of multi #'s w/ "split".
+            b = input(f"Which of these lights would you like to blink? (Split choices with comma):  ").split(',')
+#           convert list of elements from strings to integers
+            pins_to_blink = [int(item) for item in b]
+#           Puts list in sequential order. Failsafe to prevent stop at largest # out of order
+            pins_to_blink.sort()
+#           Index through leds already to blink
+            for inputs in pins_to_blink:
+                print(f"Blinking selection #{inputs - 1}: for room {self.selected_leds[inputs - 1]['room']}")
+#               - 1 from indices (inputs) b/c count starts at 0. Allowing reference to pins list from "activated_LED.
+                self.activated_LED[inputs - 1].blink(fade_in_time=.25 , fade_out_time=.25 )       #blink func from PWDLED library on user input (pins_to_blink)
+        else:
+            print("No lights selected to blink")
 
-"""Make activated leds flicker to represent a fireplace effect"""
-def led_flicker(self):
-# Step 1: Prompt user for any effects they want to apply to LEDs
-effects_flicker = input("Do you want to flicker any LEDs? Type 'y' for yes or 'n' for no: ")
-# Step 2: Prompt user for pins to blink from list of pins already on
-if effects_flicker == 'y':
-print("Here are the room lights that are on.")
-# Showing the preselected LEDs
-for led in range(len(self.selected_leds)): # member var "selected_leds" b/c it stores led info at dictionary lv
-# +1 indices (led) to override Python count that starts at 0
-print(f"{led + 1}: {self.selected_leds[led]['room']}")
+    """Make activated leds flicker to represent a fireplace effect"""
+    def led_flicker(self):
+#       Step 1: Prompt user for any effects they want to apply to LEDs
+        effects_flicker = input("Do you want to flicker any LEDs? Type 'y' for yes or 'n' for no:  ")
+#       Step 2: Prompt user for pins to blink from list of pins already on
+        if effects_flicker == 'y':
+            print("Here are the room lights that are on.")
+            # Showing the preselected LEDs
+            for led in range(len(self.selected_leds)): # member var "selected_leds" b/c it stores led info at dictionary lv
+                # +1 indices (led) to override Python count that starts at 0
+                print(f"{led + 1}: {self.selected_leds[led]['room']}")
 
-# Step 3: Setup pins to flicker
-# get user input. Make list of multi #'s w/ "split".
-b = input(f"Which of these lights would you like to flicker? (Split choices with comma): ").split(',')
-# convert list elements from strings to integers
-pins_to_flicker = [int(item) for item in b]
-# Puts list in sequential order. Failsafe to prevent stop at largest # out of order
-pins_to_flicker.sort()
-# Index through leds already to blink
-for inputs in pins_to_flicker:
-# - 1 from indices (inputs) b/c Python count starts at 0. Allowing reference to pins.
-print(f"Flickering selection #{inputs - 1}: for room {self.selected_leds[inputs - 1]['room']}")
-# pulse func from PWDLED library on user input (pins_to_blink). inputs - 1 to go back to Python count. Need to be in python count for func pulse to refer to pins
-self.activated_LED[inputs - 1].pulse(fade_in_time=.001, fade_out_time=.001)
-else:
-print("No lights selected to flicker")
+#       Step 3: Setup pins to flicker
+            # get user input. Make list of multi #'s w/ "split".
+            b = input(f"Which of these lights would you like to flicker? (Split choices with comma):  ").split(',')
+            # convert list elements from strings to integers
+            pins_to_flicker = [int(item) for item in b]
+            # Puts list in sequential order. Failsafe to prevent stop at largest # out of order
+            pins_to_flicker.sort()
+            # Index through leds already to blink
+            for inputs in pins_to_flicker:
+#               - 1 from indices (inputs) b/c Python count starts at 0. Allowing reference to pins.
+                print(f"Flickering selection #{inputs - 1}: for room {self.selected_leds[inputs - 1]['room']}")
+#               pulse func from PWDLED library on user input (pins_to_blink). inputs - 1 to go back to Python count. Need to be in python count for func pulse to refer to pins
+                self.activated_LED[inputs - 1].pulse(fade_in_time=.001, fade_out_time=.001)
+        else:
+            print("No lights selected to flicker")
 
-def led_brightness(self):
-# Step 1: Prompt user for any effects they want to apply to LEDs
-effects_bright = input("Do you want to adjust how bright the lights are? Type 'y' for yes or 'n' for no: ")
-# Step 2: Prompt user for pins to blink from list of pins already on
-if effects_bright == 'y':
-print("Here are the room lights that are on.")
-# Showing the preselected LEDs
-for led in range(len(self.selected_leds)): # member var "selected_leds" b/c it stores led info at dictionary lv
-# +1 indices (led) to override Python count that starts at 0
-print(f"{led + 1}: {self.selected_leds[led]['room']}")
+    def led_brightness(self):
+#       Step 1: Prompt user for any effects they want to apply to LEDs
+        effects_bright = input("Do you want to adjust how bright the lights are? Type 'y' for yes or 'n' for no:  ")
+#       Step 2: Prompt user for pins to blink from list of pins already on
+        if effects_bright == 'y':
+            print("Here are the room lights that are on.")
+#           Showing the preselected LEDs
+            for led in range(len(self.selected_leds)):  # member var "selected_leds" b/c it stores led info at dictionary lv
+                # +1 indices (led) to override Python count that starts at 0
+                print(f"{led + 1}: {self.selected_leds[led]['room']}")
 
-# Step 3: Setup pins to adjust brightness
-# get user input. Make list of multi #'s w/ "split".
-b = input(f"Which of these lights would you like to adjust the brightness on? (Split choices with comma): ").split(',')
-# convert list elements from strings to integers
-pins_to_bright = [int(item) for item in b]
-# Puts list in sequential order. Failsafe to prevent stop at largest # out of order
-pins_to_bright.sort()
-# Index through leds ready to adjust brightness
-for inputs in pins_to_bright:
-# - 1 from indices (inputs) b/c Python count starts at 0. Allowing reference to pins.
-print(f"Adjust brightness of #{inputs - 1}: for room {self.selected_leds[inputs - 1]['room']}")
-# pulse func from PWDLED library on user input (pins_to_blink). inputs - 1 to gt back to Python count
-self.activated_LED[inputs - 1].value=.05
+#       Step 3: Setup pins to adjust brightness
+            # get user input. Make list of multi #'s w/ "split".
+            b = input(f"Which of these lights would you like to adjust the brightness on? (Split choices with comma):  ").split(',')
+            # convert list elements from strings to integers
+            pins_to_bright = [int(item) for item in b]
+            # Puts list in sequential order. Failsafe to prevent stop at largest # out of order
+            pins_to_bright.sort()
+            # Index through leds ready to adjust brightness
+            for inputs in pins_to_bright:
+                # - 1 from indices (inputs) b/c Python count starts at 0. Allowing reference to pins.
+                print(f"Adjust brightness of #{inputs - 1}: for room {self.selected_leds[inputs - 1]['room']}")
+                # pulse func from PWDLED library on user input (pins_to_blink). inputs - 1 to gt back to Python count
+                self.activated_LED[inputs - 1].value=.05
 
-else:
-print("No lights selected to adjust brightness")
+        else:
+            print("No lights selected to adjust brightness")
 
 
-"""Motor menu prompts user for a physical house feature opportated by a motor"""
-def motor_choice(self):
-if self.main_menu(self.ports) == 'motor': # if the func "main_menu" which uses pins is 'led'
-# Step 2: Ask user which motor they want on.
-print("Which motor effect would you like on? ")
-print("Here's a list of options. ")
+    """Motor menu prompts user for a physical house feature opportated by a motor"""
+    def motor_choice(self):
+        if self.main_menu(self.ports) == 'motor':  # if the func "main_menu" which uses pins is 'led'
+#       Step 2: Ask user which motor they want on.
+            print("Which motor effect would you like on? ")
+            print("Here's a list of options. ")
 
-# Step 3: Show available options as assigned #'s
-counter = 1 # start count at 1
-for port in self.ports: # for each index (pin) in list of dictionaries (self.pins))
-print(f"{counter}: Use {port['motor']} on port {port['port']} at {port['speed']} rpm")
-counter = counter + 1 # Adds 1 to each cycle, at end of loop left at 3.
+#       Step 3: Show available options as assigned #'s
+            counter = 1                         # start count at 1
+            for port in self.ports:               # for each index (pin) in list of dictionaries (self.pins))
+                print(f"{counter}: Use {port['motor']} on port {port['port']} at {port['speed']} rpm")
+                counter = counter + 1   # Adds 1 to each cycle, at end of loop left at 3.
 
-# Step 4: Store user input
-# get user input w/ "1 -" b/c count loop ended at (3). Make list of multi #'s w/ "split"
-m = input(f"Enter # 1 - {counter - 1} (Split choices with comma): ").split(',')
-# converting elements from list into integers (their currently 'strings')
-motor_user = [int(item) for item in m] # convert elements (item) in list(l) to integers
-# Puts list in sequential order. Failsafe to prevent stopping short of running all inputs
-motor_user.sort() # numerical order ensures program runs til last #
+#       Step 4: Store user input
+                # get user input w/ "1 -" b/c count loop ended at (3). Make list of multi #'s w/ "split"
+                m = input(f"Enter # 1 - {counter - 1} (Split choices with comma):  ").split(',')
+                # converting elements from list into integers (their currently 'strings')
+                motor_user = [int(item) for item in m]  # convert elements (item) in list(l) to integers
+                # Puts list in sequential order. Failsafe to prevent stopping short of running all inputs
+                motor_user.sort()  # numerical order ensures program runs til last #
 
-# Step 5: Matching choices to ports
-for inputs in range(len(self.ports)): # for each dictionary (inputs) in length of list (pins) generate a #()
-for motors in motor_user: # & for each index(led) in user choice(led_user)
-if (inputs + 1) == motors: # match GPIO pin, w/ user choice requires +1 to inputs since index starts at 0
-print(f"Chosen {motors}: {self.ports[inputs]['motor']} for {self.ports[inputs]['speed']}")
-self.selected_motors.append(self.ports[inputs])
-self.activated_motor.append(self.motor_function(self.ports[inputs]['port']))
+#       Step 5: Matching choices to ports
+                for inputs in range(len(self.ports)):  # for each dictionary (inputs) in length of list (pins) generate a #()
+                    for motors in motor_user:  # & for each index(led) in user choice(led_user)
+                        if (inputs + 1) == motors:  # match GPIO pin, w/ user choice requires +1 to inputs since index starts at 0
+                            print(f"Chosen {motors}: {self.ports[inputs]['motor']} for {self.ports[inputs]['speed']}")
+                            self.selected_motors.append(self.ports[inputs])
+                            self.activated_motor.append(self.motor_function(self.ports[inputs]['port']))
 
-""" Open door with motor function"""
-def motor_door(self):
-motor_a = Motor(self.activated_motor)
-motor_effect = input("Do you want to open the door? Type 'y' for yes or 'n' for no: ")
+    """ Open door with motor function"""
+    def motor_door(self):
+        motor_a = Motor(self.activated_motor)
+        motor_effect = input("Do you want to open the door? Type 'y' for yes or 'n' for no:  ")
 
-if motor_effect == 'y':
-motor_a.run_to_position(110, 80)
-close_door = input("Do you want to close the door? Type 'y' for yes or 'n' for no: ")
+        if motor_effect == 'y':
+            motor_a.run_to_position(110, 80)
+            close_door = input("Do you want to close the door? Type 'y' for yes or 'n' for no: ")
 
-if close_door == 'y':
-motor_a.run_to_position(0, 80, True, 'anticlockwise')
+            if close_door == 'y':
+                motor_a.run_to_position(0, 80, True, 'anticlockwise')
 
-else:
-print("Keeping door open.")
-else:
-print("No need to activate motors.")
+            else:
+                print("Keeping door open.")
+        else:
+            print("No need to activate motors.")
 
-def motor_off(self):
-for selected in self.activated_motor:
-selected.stop()
+    def motor_off(self):
+        for selected in self.activated_motor:
+            selected.stop()
 
 
 def main():
 
-pins = [{'room': 'fireplace_1', 'pin_num': 3, 'PWM': 30},
-{'room': 'fireplace_2', 'pin_num': 6, 'PWM': 30},
-{'room': 'entry_way', 'pin_num': 17, 'PWM': 100},
-{'room': 'dining_room', 'pin_num': 27, 'PWM': 100},
-{'room': 'camera', 'pin_num': 26, 'PWM': 100},
-{'room': 'big_brothers_room', 'pin_num': 7, 'PWM': 100},
-{'room': 'hallway', 'pin_num': 5, 'PWM': 100},
-{'room': 'bathroom', 'pin_num': 13, 'PWM': 100},
-{'room': 'attic', 'pin_num': 21, 'PWM': 100},
-{'room': 'kitchen', 'pin_num': 20, 'PWM': 100},
-{'room': 'basement', 'pin_num': 12, 'PWM': 100},
-{'room': 'back_porch', 'pin_num': 22, 'PWM': 100}]
+    pins = [{'room': 'fireplace_1', 'pin_num': 3, 'PWM': 30},
+            {'room': 'fireplace_2', 'pin_num': 6, 'PWM': 30},
+            {'room': 'entry_way', 'pin_num': 17, 'PWM': 100},
+            {'room': 'dining_room', 'pin_num': 27, 'PWM': 100},
+            {'room': 'camera', 'pin_num': 26, 'PWM': 100},
+            {'room': 'big_brothers_room', 'pin_num': 7, 'PWM': 100},
+            {'room': 'hallway', 'pin_num': 5, 'PWM': 100},
+            {'room': 'bathroom', 'pin_num': 13, 'PWM': 100},
+            {'room': 'attic', 'pin_num': 21, 'PWM': 100},
+            {'room': 'kitchen', 'pin_num': 20, 'PWM': 100},
+            {'room': 'basement', 'pin_num': 12, 'PWM': 100},
+            {'room': 'back_porch', 'pin_num': 22, 'PWM': 100}]
 
-ports = [{'motor': 'door', 'port': 'A', 'speed': 80},
-{'motor': 'party_trick', 'port': 'B', 'speed': 80}]
+    ports = [{'motor': 'door', 'port': 'A', 'speed': 80},
+            {'motor': 'party_trick', 'port': 'B', 'speed': 80}]
 
-#Code below is in order of which prog executes functions called from above code
-one= BIL() # call to execute class (BIL) when prog runs
-one.set_pins(pins=pins) # executes class func to format pins & able to replace pins var w/ any modification
-# # two= BIL(pins=pins) # able to replace current var(pins) in class(BIL) w/o having to modifying old one
-one.led_choice()
-# one.led_blink()
-# one.led_flicker()
-# one.led_brightness()
-# one.motor_choice()
-# one.motor_door()
-input("Press Enter to exit:")
-# #After Enter is pressed, next on the list to execute is function led_off which
-# one.led_off()
-one.motor_off()
+    #Code below is in order of which prog executes functions called from above code
+    one= BIL()                # call to execute class (BIL) when prog runs
+    one.set_pins(pins=pins)   # executes class func to format pins & able to replace pins var w/ any modification
+    # # two= BIL(pins=pins)   # able to replace current var(pins) in class(BIL) w/o having to modifying old one
+    one.led_choice()
+    # one.led_blink()
+    # one.led_flicker()
+    # one.led_brightness()
+    # one.motor_choice()
+    # one.motor_door()
+    input("Press Enter to exit:")
+    # #After Enter is pressed, next on the list to execute is function led_off which
+    # one.led_off()
+    one.motor_off()
 
 
 if __name__ == '__main__':
 
-main()
+    main()
