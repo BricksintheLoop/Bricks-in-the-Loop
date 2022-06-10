@@ -1,0 +1,2 @@
+in = input("Which pin is assigned to this light? ")
+print(next((i for i, x in enumerate(pins) if x['room'] == in), None))
